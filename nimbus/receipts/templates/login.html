@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+{% include 'head.html' %}
+  <body>
+    {% include 'navbar.html' %}
+    <br>
+    <br>
+    <div class="loginform">
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Log In</button>
+      </form>
+    </div>
+
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

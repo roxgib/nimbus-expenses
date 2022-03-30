@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+{% include 'head.html' %}
+  <body>
+    {% include 'navbar.html' %}
+    <br />
+    <div class="container">
+      <div class="d-grid gap-2">
+        <button
+          type="button"
+          class="btn btn-primary float-left btn-lg"
+          onclick="getPhoto()"
+        >
+          Take photo
+        </button>
+          <div id="photoAlert"></div>
+
+          <input
+            type="file"
+            class="form-control"
+            placeholder="Photo"
+            accept="image/*;capture=camera"
+          />
+          <div class="input-group mb-3">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Expense"
+              aria-label="Expense"
+              aria-describedby="basic-addon1"
+            />
+          </div>
+
+          <div class="input-group mb-3">
+            <span class="input-group-text">$</span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Amount"
+              aria-label="Amount"
+              inputmode="numeric"
+            />
+          </div>
+
+          <div class="input-group">
+            <span class="input-group-text">Notes</span>
+            <textarea
+              class="form-control"
+              aria-label="With textarea"
+            ></textarea>
+          </div>
+        <input class="btn btn-primary btn-lg" type="submit" value="Submit" />
+      </div>
+    </div>
+
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+  </body>
+
+<script>
+  function getPhoto() {
+    if (
+      !("mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices)
+    ) {
+      alert(
+        "Unable to access the camera on your device. Please add permission in settings."
+      );
+      return;
+    }
+
+    let photo = navigator.mediaDevices.getUserMedia({
+      video: true,
+      facingMode: "user",
+    });
+  }
+
+  function submitExpense() {}
+</script>
+</html>
