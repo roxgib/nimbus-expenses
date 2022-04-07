@@ -21,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-z7z@8_h-mffu!!(*1qd_xdii*0qgp6yz949rtjj@v%-z-l)hx4'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['nimbusreceipts.azuresites.com']
+ALLOWED_HOSTS = ['nimbusreceipts.azuresites.com', '127.0.0.1']
 
 
 # Application definition
@@ -77,11 +77,13 @@ WSGI_APPLICATION = 'nimbus.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ['DBNAME'],
+        'HOST': os.environ['DBHOST'],
+        'USER': os.environ['DBUSER'],
+        'PASSWORD': os.environ['DBPASS'] 
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
