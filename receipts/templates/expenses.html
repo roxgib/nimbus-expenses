@@ -3,8 +3,27 @@
 {% include 'head.html' %}
   <body>
     {% include 'navbar.html' %}
-
-
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Date</th>
+            <th scope="col">Expense</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for expense in expenses %}
+          <tr>
+            <th scope="row">1</th>
+            {% for item in expense %}
+            <td>{{ item }}</td>
+            {% endfor %}    
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
     <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

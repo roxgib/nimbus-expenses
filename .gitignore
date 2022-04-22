@@ -4,6 +4,8 @@
 .DS_Store
 *.DS_Store
 */.DS_Store
+expenses/
+receipts/migrations/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
