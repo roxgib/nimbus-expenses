@@ -8,28 +8,21 @@
       {% csrf_token %}
       <div class="container form-group">
         <div class="d-grid gap-2">
-          <div class="input-group mb-3">  
-            <input
-              type="file"
-              class="form-control"
-              name="image"
-              placeholder="Image"
-              accept="image/*;capture=camera"
-            />
-          </div>
           
-          <div class="input-group mb-3">
+          <div class="input-group mb-2">
+            <span class="input-group-text">Expense</span>
             <input
               type="text"
               class="form-control"
               name="expense"
-              placeholder="Expense"
+              placeholder="e.g. Printer, Taxi, Stationary"
               aria-label="Expense"
               aria-describedby="basic-addon1"
             />
           </div>
 
-          <div class="input-group mb-3">
+          <div class="input-group mb-2">
+            <span class="input-group-text">Date</span>
             <input 
               class="form-control" 
               id="date" 
@@ -39,7 +32,7 @@
               type="text"/>
           </div>
 
-          <div class="input-group mb-3">
+          <div class="input-group mb-2">
             <span class="input-group-text">$</span>
             <input
               type="text"
@@ -51,7 +44,7 @@
             />
           </div>
 
-          <div class="input-group">
+          <div class="input-group mb-2">
             <span class="input-group-text">Notes</span>
             <textarea
               class="form-control"
@@ -59,6 +52,17 @@
               name="notes"
             ></textarea>
           </div>
+
+            <div class="input-group mb-2">  
+              <input
+                type="file"
+                class="form-control"
+                name="image"
+                placeholder="Image"
+                accept="image/*;capture=camera"
+              />
+            </div>
+
             <input class="btn btn-primary btn-lg" type="submit" value="Submit" />
         </div>
       </div>
