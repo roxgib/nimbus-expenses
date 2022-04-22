@@ -5,6 +5,7 @@ class User(DefaultUser):
     pass
 
 class Expense(models.Model):
+    readonly_fields = 'date_added', 'user'
     # id = models.IntegerField('ID', primary_key=True)
     date_added = models.DateTimeField('Date Added')
     date = models.DateTimeField('Date')

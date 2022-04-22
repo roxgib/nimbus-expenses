@@ -8,15 +8,7 @@
       {% csrf_token %}
       <div class="container form-group">
         <div class="d-grid gap-2">
-          <button
-            type="button"
-            class="btn btn-primary float-left btn-lg"
-            onclick="getPhoto()"
-          >
-            Take photo
-          </button>
-            <div id="photoAlert"></div>
-
+          <div class="input-group mb-3">  
             <input
               type="file"
               class="form-control"
@@ -24,48 +16,50 @@
               placeholder="Image"
               accept="image/*;capture=camera"
             />
-            <div class="input-group mb-3">
-              <input
-                type="text"
-                class="form-control"
-                name="expense"
-                placeholder="Expense"
-                aria-label="Expense"
-                aria-describedby="basic-addon1"
-              />
-            </div>
+          </div>
+          
+          <div class="input-group mb-3">
+            <input
+              type="text"
+              class="form-control"
+              name="expense"
+              placeholder="Expense"
+              aria-label="Expense"
+              aria-describedby="basic-addon1"
+            />
+          </div>
 
-            <div class="input-group mb-3">
-              <input 
-                class="form-control" 
-                id="date" 
-                name="date" 
-                placeholder="MM/DD/YYY" 
-                aria-label="Date"
-                type="text"/>
-            </div>
+          <div class="input-group mb-3">
+            <input 
+              class="form-control" 
+              id="date" 
+              name="date" 
+              placeholder="MM/DD/YYY" 
+              aria-label="Date"
+              type="text"/>
+          </div>
 
-            <div class="input-group mb-3">
-              <span class="input-group-text">$</span>
-              <input
-                type="text"
-                class="form-control"
-                name="amount"
-                placeholder="Amount"
-                aria-label="Amount"
-                inputmode="numeric"
-              />
-            </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text">$</span>
+            <input
+              type="text"
+              class="form-control"
+              name="amount"
+              placeholder="Amount"
+              aria-label="Amount"
+              inputmode="numeric"
+            />
+          </div>
 
-            <div class="input-group">
-              <span class="input-group-text">Notes</span>
-              <textarea
-                class="form-control"
-                aria-label="With textarea"
-                name="notes"
-              ></textarea>
-            </div>
-          <input class="btn btn-primary btn-lg" type="submit" value="Submit" />
+          <div class="input-group">
+            <span class="input-group-text">Notes</span>
+            <textarea
+              class="form-control"
+              aria-label="With textarea"
+              name="notes"
+            ></textarea>
+          </div>
+            <input class="btn btn-primary btn-lg" type="submit" value="Submit" />
         </div>
       </div>
     </form>
@@ -73,25 +67,6 @@
     <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
   </body>
 
-<script>
-  function getPhoto() {
-    if (
-      !("mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices)
-    ) {
-      alert(
-        "Unable to access the camera on your device. Please add permission in settings."
-      );
-      return;
-    }
-
-    let photo = navigator.mediaDevices.getUserMedia({
-      video: true,
-      facingMode: "user",
-    });
-  }
-
-  function submitExpense() {}
-</script>
 <script>
   $(document).ready(function(){
     var date_input=$('input[name="date"]'); //our date input has the name "date"
