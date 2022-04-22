@@ -28,7 +28,7 @@ def expenses(request: HttpRequest) -> HttpResponse:
             expense.expense,
             f"${expense.amount:.2f}",
             expense.notes,
-        ] for expense in Expense.objects.all()
+        ] for expense in sorted(Expense.objects.all(), key=lambda e: e.date, reverse=True)
     ]
 
     return render(request, 'expenses.html', {'expenses':expense_list})
@@ -55,7 +55,14 @@ def submit(request: HttpRequest) -> HttpResponse:
                     file.write(chunk)
             e = Expense(
                 date_added = date.today(),
-                date = date.today(),
+                # date = request.POST['date'],
+                date = datetime.strftime(
+                    datetime.strptime(
+                        request.POST['date'],
+                        "%m/%d/%Y"
+                    ),
+                    '%Y-%m-%d %H:%M'
+                ),
                 amount = request.POST['amount'],
                 image = filepath,
                 notes = request.POST['notes'],
