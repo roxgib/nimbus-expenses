@@ -73,3 +73,7 @@ class Expense(models.Model):
         blank=True, 
         null=True
     )
+
+    def __str__(self):
+        date = self.date.strftime('%-d %b')
+        return f"{self.client.name} ({self.expense}, ${self.amount}, {date})"

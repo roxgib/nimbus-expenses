@@ -50,33 +50,46 @@ class MainTestCase(TestCase):
             client = Client.objects.get(name="Test Client 2"),
         )
 
+        self.c1 = Client.objects.get(name='Test Client 1')
+        self.c2 = Client.objects.get(name='Test Client 2')
+        self.e1 = Expense.objects.get(expense="Test Expense 1")
+        self.e2 = Expense.objects.get(expense="Test Expense 2")
+        self.e3 = Expense.objects.get(expense="Test Expense 3")
+
+
+    def test_client_str(self):
+        self.assertEqual(self.c1.__str__(), "Test Client 1")
+        self.assertEqual(self.c2.__str__(), "Test Client 2")
+
+    def test_client_expenses(self):
+        self.assertEqual(list(self.c1.expenses), list())
+        self.assertEqual(list(self.c2.expenses), list(Expense.objects.all()))
+
+    def test_client_total(self):
+        self.assertEqual(self.c1.total, 0)
+        self.assertEqual(self.c2.total, Decimal('259.21'))
+
     def test_auth(self):
-        client = Client.objects.get(name="Test Client 2")
+        client = self.c2
         auth_code = client.set_auth_code()
         self.assertTrue(client.validate_auth_code(auth_code))
         self.assertFalse(client.validate_auth_code(auth_code))
 
     def test_auth_wrong_code(self):
-        client = Client.objects.get(name="Test Client 2")
+        client = self.c2
         auth_code = client.set_auth_code()
         self.assertFalse(client.validate_auth_code(auth_code + '1'))
         self.assertFalse(client.validate_auth_code(auth_code))
 
     def test_auth_expired(self):
-        client = Client.objects.get(name="Test Client 2")
+        client = self.c2
         auth_code = client.set_auth_code()
         client.auth_expiry -= timedelta(2)
         self.assertFalse(client.validate_auth_code(auth_code))
 
-    def test_client(self):
-        client1 = Client.objects.get(name='Test Client 1')
-        client2 = Client.objects.get(name='Test Client 2')
-
-        self.assertEqual(client1.__str__(), "Test Client 1")
-        self.assertEqual(client2.__str__(), "Test Client 2")
-
-        self.assertEqual(list(client1.expenses), list())
-        self.assertEqual(list(client2.expenses), list(Expense.objects.all()))
-
-        self.assertEqual(client1.total, 0)
-        self.assertEqual(client2.total, Decimal('259.21'))
+    def test_expense_str(self):
+        self.assertEqual(self.e1.__str__(), 
+                        "Test Client 2 (Test Expense 1, $123.45, 1 Jan)")
+        self.assertEqual(self.e2.__str__(), 
+                        "Test Client 2 (Test Expense 2, $12.30, 1 Jan)")
+        self.assertEqual(self.e2.__str__(), "")
