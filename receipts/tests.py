@@ -2,7 +2,7 @@ from datetime import timedelta
 from decimal import Decimal
 
 from django.test import TestCase
-from django.db import models
+
 from receipts.models import Client, Expense
 
 
@@ -62,34 +62,32 @@ class MainTestCase(TestCase):
         self.assertEqual(self.c2.__str__(), "Test Client 2")
 
     def test_client_expenses(self):
-        self.assertEqual(list(self.c1.expenses), list())
-        self.assertEqual(list(self.c2.expenses), list(Expense.objects.all()))
+        self.assertListEqual(list(self.c1.expenses), list())
+        self.assertListEqual(list(self.c2.expenses), list(Expense.objects.all()))
 
     def test_client_total(self):
         self.assertEqual(self.c1.total, 0)
         self.assertEqual(self.c2.total, Decimal('259.21'))
 
     def test_auth(self):
-        client = self.c2
-        auth_code = client.set_auth_code()
-        self.assertTrue(client.validate_auth_code(auth_code))
-        self.assertFalse(client.validate_auth_code(auth_code))
+        auth_code = self.c2.set_auth_code()
+        self.assertTrue(self.c2.validate_auth_code(auth_code))
+        self.assertFalse(self.c2.validate_auth_code(auth_code))
 
     def test_auth_wrong_code(self):
-        client = self.c2
-        auth_code = client.set_auth_code()
-        self.assertFalse(client.validate_auth_code(auth_code + '1'))
-        self.assertFalse(client.validate_auth_code(auth_code))
+        auth_code = self.c2.set_auth_code()
+        self.assertFalse(self.c2.validate_auth_code(auth_code + '1'))
+        self.assertFalse(self.c2.validate_auth_code(auth_code))
 
     def test_auth_expired(self):
-        client = self.c2
-        auth_code = client.set_auth_code()
-        client.auth_expiry -= timedelta(2)
-        self.assertFalse(client.validate_auth_code(auth_code))
+        auth_code = self.c2.set_auth_code()
+        self.c2.auth_expiry -= timedelta(2)
+        self.assertFalse(self.c2.validate_auth_code(auth_code))
 
     def test_expense_str(self):
         self.assertEqual(self.e1.__str__(), 
                         "Test Client 2 (Test Expense 1, $123.45, 1 Jan)")
         self.assertEqual(self.e2.__str__(), 
                         "Test Client 2 (Test Expense 2, $12.30, 1 Jan)")
-        self.assertEqual(self.e2.__str__(), "")
+        self.assertEqual(self.e3.__str__(), 
+                        "Test Client 2 (Test Expense 3, $123.46, 1 Jan)")
