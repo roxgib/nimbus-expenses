@@ -77,12 +77,9 @@ WSGI_APPLICATION = 'nimbus.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ['DBNAME'],
-        'HOST': os.environ['DBHOST'],
-        'USER': os.environ['DBUSER'],
-        'PASSWORD': os.environ['DBPASS'] 
-    }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': './dev_database.sqlite',
+    },
 }
 
 # Password validation
