@@ -1,24 +1,21 @@
 from datetime import datetime, timedelta
-from secrets import token_hex
+from secrets import token_urlsafe
 
 from django.db import models
+from django.core.mail import send_mail
+from django.contrib.auth.models import User
 
-class Client(models.Model): 
-    name = models.CharField('Expense', max_length=300)
-    email = models.EmailField("E-mail", 'email', max_length=60, unique=True)
+from nimbus import settings
+
+class Client(User):
     notes = models.TextField('Notes', max_length=300, null=True, blank=True)
-    username     = models.CharField(max_length=30, unique=True)
-    date_joined  = models.DateTimeField('date joined', auto_now_add=True)
-    auth_code    = models.CharField("Autentication Code", 'auth_code', None, 
-                                    max_length=24, null=True, blank=True)
-    auth_expiry  = models.DateTimeField("Authentication Code Expiry Date",      
-                                        'auth_expiry', null=True, blank=True)
-
-    REQUIRED_FIELDS = ['username', 'email', 'date_joined']
-    READONLY_FIELDS = ['date_joined']
+    auth_token = models.CharField("Authentication Code", 'auth_token', None, 
+                                  max_length=24, null=True, blank=True)
+    auth_expiry = models.DateTimeField("Authentication Code Expiry Date",      
+                                       'auth_expiry', null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return self.username
 
     @property
     def expenses(self) -> list:
@@ -30,29 +27,11 @@ class Client(models.Model):
         if expenses is None: return 0
         return sum([e.amount for e in expenses])
 
-    def send_auth_email(self, code: str) -> None:
-        pass
-
-    def set_auth_code(self) -> str:
-        auth_code = token_hex(24)
-        self.auth_code = auth_code
-        self.auth_expiry = datetime.now() + timedelta(1)
-        return auth_code
-
-    def validate_auth_code(self, auth_code: str) -> bool:
-        if (self.auth_code is not None
-            and self.auth_code == auth_code 
-            and self.auth_expiry > datetime.now()
-        ):
-            self.reset_auth()
-            return True
-        else:
-            self.reset_auth()
-            return False
-
     def reset_auth(self):
-        self.auth_code = None
+        self.auth_token = None
         self.auth_expiry = None
+        self.save()
+        return True
 
 
 class Expense(models.Model):

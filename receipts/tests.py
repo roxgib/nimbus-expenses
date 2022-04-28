@@ -5,7 +5,6 @@ from django.test import TestCase
 
 from receipts.models import Client, Expense
 
-
 class MainTestCase(TestCase):
     def setUp(self):
         Client.objects.create(

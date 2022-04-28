@@ -6,8 +6,8 @@ import os
 ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME']] if 'WEBSITE_HOSTNAME' in os.environ else []
 CSRF_TRUSTED_ORIGINS = ['https://'+ os.environ['WEBSITE_HOSTNAME']] if 'WEBSITE_HOSTNAME' in os.environ else []
 
-# for pre-prod testing
-DEBUG = True
+# FIXME left on for pre-prod testing
+DEBUG = True 
 
 # WhiteNoise configuration
 MIDDLEWARE = [                                                                   
@@ -25,18 +25,15 @@ MIDDLEWARE = [
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-# DBHOST is only the server name, not the full URL
-hostname = os.environ['DBHOST']
-
-# Configure Postgres database; the full username for PostgreSQL flexible server is
-# username (not @sever-name).
+# The full username for PostgreSQL flexible server is username (not @sever-name)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ['DBNAME'],
-        'HOST': hostname,
+        'HOST': os.environ['DBHOST'],
         'USER': os.environ['DBUSER'],
         'PASSWORD': os.environ['DBPASS'] 
     }
 }
 
+EMAIL_LINK_DOMAIN = "https://nimbusexpenses.azurewebsites.net/"

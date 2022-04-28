@@ -4,12 +4,18 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('login/', LoginView.as_view(template_name='login.html'), name='login'),
+
+    path('login/<str:token>/', views.login, name='login'),
+    path('login/', views.login, name='login'),
+    path('logout/', views.logout, name='logout'),
+
+
     path('add/', views.add, name='add'),
     path('expenses/', views.expenses, name='expenses'),
-    path('help/', views.help, name='help'),
     path('submit/', views.submit, name='submit'),
-    path('manage/', views.manage, name='manage'),
-    path('manage/<int:client>/', views.manage, name='manage')
-]
 
+    path('help/', views.help, name='help'),
+
+    path('manage/', views.manage, name='manage'),
+    path('manage/<int:client>/', views.manage, name='manage'),   
+]

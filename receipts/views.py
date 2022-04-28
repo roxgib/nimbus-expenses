@@ -1,15 +1,21 @@
 from __future__ import annotations
 
 from datetime import date, datetime
+from decimal import Decimal
+from random import randint
 
 from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
-from django.http import HttpRequest, HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, logout as logout_, login as login_
+from django.http import (HttpRequest, HttpResponse,                 
+                         HttpResponsePermanentRedirect as HttpRedirect)
+import django
 
 from .models import Expense, Client
 from .forms import UploadForm
+from .auth import EmailAuthBackend as auth
 
-def index(request: HttpRequest) -> HttpResponse:
+def index(request: HttpRequest) -> HttpRedirect:
     # user = get_user(request)
     # if not user.is_authenticated:
     #     return redirect(f"/login/")
@@ -19,26 +25,27 @@ def index(request: HttpRequest) -> HttpResponse:
     #     return redirect(f"/login/")
     return redirect(f"/add/")
 
+@login_required
 def add(request: HttpRequest, errors: dict | None = None) -> HttpResponse:
     return render(request, 'add.html')
 
-def expenses(request: HttpRequest, user: int | None = None) -> HttpResponse:
-    expense_list =  [
-        [
-            expense.date.strftime('%-d %b %y'),
-            expense.expense,
-            f"${expense.amount:.2f}",
-            expense.notes,
-        ] for expense in sorted(Expense.objects.all(), 
-                                key=lambda e: e.date, 
-                                reverse=True)
-    ]
+@login_required
+def expenses(request: HttpRequest) -> HttpResponse:
+    client = request.user
+    if not client.authenticated: 
+        return redirect('/')
+    expenses = Expense.objects.filter(client=client)
+    expenses.sort(key=lambda e: e.date, reverse=True)
+    expense_list = [
+        [e.date.strftime('%-d %b %y'), e.expense, f"${e.amount:.2f}", e.notes] for e in expenses
+        ]
     return render(request, 'expenses.html', {'expenses': expense_list})
 
 def help(request: HttpRequest) -> HttpResponse:
     return render(request, 'help.html')
 
-def submit(request: HttpRequest) -> HttpResponse:
+@login_required
+def submit(request: HttpRequest) -> HttpRedirect:
     if request.method != 'POST': 
         return redirect('/')
     form = UploadForm(request.POST, request.FILES)
@@ -60,24 +67,75 @@ def submit(request: HttpRequest) -> HttpResponse:
             file.write(chunk)
 
     # FIXME Subclass model.init to transform the arguments
-    request.POST['date'] = datetime.strftime(
-            datetime.strptime(request.POST['date'],"%m/%d/%Y"),
-            '%Y-%m-%d %H:%M')
 
-    Expense(date_added = date.today(), image = filepath, **request.POST).save()
-        # user = request.POST['user'], # FIXME Need to send user information
+    post = dict(request.POST)
+    post['date'] = datetime.strftime(
+        datetime.strptime(request.POST['date'],"%m/%d/%Y"),
+        '%Y-%m-%d %H:%M')
+
+    print(post)
+    del post['csrfmiddlewaretoken']
+    post['amount'] = post['amount'][0]
+
+    Expense.objects.create(date_added = date.today(), 
+                           image = filepath, 
+                           client = request.user, 
+                           **post
+                           )
     
     return redirect('/add')
 
-def manage(request: HttpRequest, client: int | None = None) -> HttpResponse:
-    if client is None:
+@login_required
+def manage(request: HttpRequest, client_id: int | None = None) -> HttpResponse:
+    if client_id is None:
         context={'clients': [[
-                _user.user,
-                len(_user.expenses),
-                _user.total,
-                _user.notes,
-                _user.gst,
-            ] for _user in Client.objects.get()]}
+                client.username,
+                len(client.expenses),
+                client.total,
+                client.notes,
+                client.gst,
+            ] for client in Client.objects.get()]}
         return render(request, 'manage.html', context)
 
-    return render(request, 'expenses.html', client)
+    return render(request, 'expenses.html', client_id)
+
+def login(request: HttpRequest, token: str | None = None
+        ) -> HttpResponse | HttpRedirect:
+    if request.method == 'POST':
+        if 'email' in request.POST:
+            email = request.POST['email']
+            try:
+                client = Client.objects.get(email=email)
+            except django.core.exceptions.ObjectDoesNotExist:
+                client = Client.objects.create(
+                    email=email,
+                    username=str(randint(100000, 999999)))
+                print("Created client and sent email")
+            else:
+                print("Sent email to " + client.email)
+            auth.send_auth_email(client)
+            return render(
+                request, 'message',
+                {'message': f"An email has been sent to {client.email}. Please open the sign in list on this device."})
+        elif 'username' and 'password' in request.POST:
+            authenticate(request, request.POST['username', 'password'])
+            print("Authenticated with username and password")
+            return redirect(request.POST['next'])
+        else:
+            print("Error, redirecting")
+            return redirect('/login')
+    elif request.method == 'GET' and token is not None:
+        client = authenticate(request, token=token)
+        if client is not None:
+            login_(request, client)
+            print("Authenticated", client)
+            return redirect('/')
+        else:
+            print('Token not accepted: ', token)
+            return redirect('login')
+    else:
+        return render(request, 'login.html')
+
+def logout(request: HttpRequest) -> HttpRedirect:
+    logout_(request)
+    return redirect('/')

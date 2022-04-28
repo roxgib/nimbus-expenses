@@ -23,6 +23,7 @@
           <a class="nav-link {% if request.resolver_match.url_name == 'add' %}active{% endif %}" aria-current="page" href="/add/">Add</a>
           <a class="nav-link {% if request.resolver_match.url_name == 'expenses' %}active{% endif %}" href="/expenses/">Expenses</a>
           <a class="nav-link {% if request.resolver_match.url_name == 'help' %}active{% endif %}" href="/help/">Help</a>
+          <a class="nav-link {% if request.resolver_match.url_name == 'logout' %}active{% endif %}" href="/logout/">Logout</a>
         </div>
       </div>
     </div>

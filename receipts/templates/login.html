@@ -7,14 +7,28 @@
     <br>
     <div class="container">
       <div class="loginform form-group" style>
-        <form method="post">
+         <form class="post-form" enctype="multipart/form-data" action="{% url 'login' %}" method="POST">
           {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit">Log In</button>
+          <div class="container form-group">
+            <div class="d-grid gap-2">
+              <div class="input-group mb-2">
+                <span class="input-group-text">Email</span>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="email"
+                  placeholder="e.g. john.smith@example.com"
+                  aria-label="Email Address"
+                  aria-describedby="basic-addon1"
+                />
+              </div>
+            </div>
+          
+          <button class="btn btn-primary" type="submit">Log In</button>
+          </div>
         </form>
       </div>
     </div>
-
     <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
