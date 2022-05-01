@@ -31,7 +31,7 @@ class EmailAuthBackend(django.contrib.auth.backends.BaseBackend):
         return client
         
     @staticmethod
-    def get_user(self, user_id):
+    def get_user(user_id):
         try:
             return Client.objects.get(id=user_id)
         except Client.DoesNotExist:
