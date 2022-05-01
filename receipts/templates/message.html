@@ -4,10 +4,11 @@
   <body>
     {% include 'navbar.html' %}
     <br>
-    <br>
+    <div class="container"> 
       <div class="alert alert-primary" role="alert">
-        {% message %}
+        {{ message }}
       </div>
+    </div>
     <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

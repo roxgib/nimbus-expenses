@@ -115,8 +115,8 @@ def login(request: HttpRequest, token: str | None = None
                 print("Sent email to " + client.email)
             auth.send_auth_email(client)
             return render(
-                request, 'message',
-                {'message': f"An email has been sent to {client.email}. Please open the sign in list on this device."})
+                request, 'message.html',
+                {'message': f"An email has been sent to {client.email}. Please open the sign in link on this device."})
         elif 'username' and 'password' in request.POST:
             authenticate(request, request.POST['username', 'password'])
             print("Authenticated with username and password")

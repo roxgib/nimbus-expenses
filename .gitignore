@@ -6,6 +6,7 @@
 */.DS_Store
 expenses/
 receipts/migrations/
+*.sqlite
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -136,4 +137,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-dev_database.sqlite
+
