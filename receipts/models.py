@@ -27,12 +27,6 @@ class Client(User):
         if expenses is None: return 0
         return sum([e.amount for e in expenses])
 
-    def reset_auth(self):
-        self.auth_token = None
-        self.auth_expiry = None
-        self.save()
-        return True
-
 
 class Expense(models.Model):
     readonly_fields = 'date_added', 'user'
@@ -55,4 +49,4 @@ class Expense(models.Model):
 
     def __str__(self):
         date = self.date.strftime('%-d %b')
-        return f"{self.client.name} ({self.expense}, ${self.amount}, {date})"
+        return f"{self.client.username} ({self.expense}, ${self.amount}, {date})"

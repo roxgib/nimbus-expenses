@@ -4,19 +4,18 @@ from decimal import Decimal
 from django.test import TestCase
 
 from receipts.models import Client, Expense
+from receipts.auth import EmailAuthBackend as auth
 
 class MainTestCase(TestCase):
     def setUp(self):
         Client.objects.create(
-            name = "Test Client 1",
+            username = "Test Client 1",
             email = "test1@example.com",
-            username = "Test 1",
             )
 
         Client.objects.create(
-            name = "Test Client 2",
+            username = "Test Client 2",
             email = "test2@example.com",
-            username = "Test 2",
             )
 
         Expense.objects.create(
@@ -26,7 +25,7 @@ class MainTestCase(TestCase):
             gst = True,
             image = "./expenses/test1.png",
             date_added = "2022-02-01 00:00",
-            client = Client.objects.get(name="Test Client 2"),
+            client = Client.objects.get(username="Test Client 2"),
         )
 
         Expense.objects.create(
@@ -36,7 +35,7 @@ class MainTestCase(TestCase):
             gst = True,
             image = "./expenses/test2.png",
             date_added = "2022-02-01 00:00",
-            client = Client.objects.get(name="Test Client 2"),
+            client = Client.objects.get(username="Test Client 2"),
         )
 
         Expense.objects.create(
@@ -46,15 +45,14 @@ class MainTestCase(TestCase):
             gst = False,
             image = "./expenses/test3.png",
             date_added = "2022-02-01 00:00",
-            client = Client.objects.get(name="Test Client 2"),
+            client = Client.objects.get(username="Test Client 2"),
         )
 
-        self.c1 = Client.objects.get(name='Test Client 1')
-        self.c2 = Client.objects.get(name='Test Client 2')
-        self.e1 = Expense.objects.get(expense="Test Expense 1")
-        self.e2 = Expense.objects.get(expense="Test Expense 2")
-        self.e3 = Expense.objects.get(expense="Test Expense 3")
-
+        self.c1: Client = Client.objects.get(username='Test Client 1')
+        self.c2: Client = Client.objects.get(username='Test Client 2')
+        self.e1: Expense = Expense.objects.get(expense="Test Expense 1")
+        self.e2: Expense = Expense.objects.get(expense="Test Expense 2")
+        self.e3: Expense = Expense.objects.get(expense="Test Expense 3")
 
     def test_client_str(self):
         self.assertEqual(self.c1.__str__(), "Test Client 1")
@@ -69,19 +67,24 @@ class MainTestCase(TestCase):
         self.assertEqual(self.c2.total, Decimal('259.21'))
 
     def test_auth(self):
-        auth_code = self.c2.set_auth_code()
-        self.assertTrue(self.c2.validate_auth_code(auth_code))
-        self.assertFalse(self.c2.validate_auth_code(auth_code))
+        auth_token = auth.set_auth_token(self.c2)
+        self.assertEqual(auth.authenticate(None, auth_token), self.c2)
+        # tokens are only valid once
+        self.assertIsNone(auth.authenticate(None, auth_token)) 
 
     def test_auth_wrong_code(self):
-        auth_code = self.c2.set_auth_code()
-        self.assertFalse(self.c2.validate_auth_code(auth_code + '1'))
-        self.assertFalse(self.c2.validate_auth_code(auth_code))
+        auth_token = auth.set_auth_token(self.c2)
+        incorrect_auth_token = auth_token
+        incorrect_auth_token = 'ABC' + auth_token[3:]
+        assert len(auth_token) == len(incorrect_auth_token)
+        self.assertIsNone(auth.authenticate(None, incorrect_auth_token))
+        self.assertEqual(auth.authenticate(None, auth_token), self.c2)
 
     def test_auth_expired(self):
-        auth_code = self.c2.set_auth_code()
+        auth_token = auth.set_auth_token(self.c2)
         self.c2.auth_expiry -= timedelta(2)
-        self.assertFalse(self.c2.validate_auth_code(auth_code))
+        self.c2.save()
+        self.assertIsNone(auth.authenticate(None, auth_token))
 
     def test_expense_str(self):
         self.assertEqual(self.e1.__str__(), 
