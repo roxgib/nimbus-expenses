@@ -12,7 +12,7 @@ urlpatterns = [
 
     path('add/', views.add, name='add'),
     path('expenses/', views.expenses, name='expenses'),
-    path('submit/', views.submit, name='submit'),
+    path('submit/', views.add_expense, name='add_expense'),
 
     path('help/', views.help, name='help'),
 

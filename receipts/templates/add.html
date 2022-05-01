@@ -4,7 +4,7 @@
   <body>
     {% include 'navbar.html' %}
     <br />
-    <form class="post-form" enctype="multipart/form-data" action="{% url 'submit' %}" method="POST">
+    <form class="post-form" enctype="multipart/form-data" action="{% url 'add_expense' %}" method="POST">
       {% csrf_token %}
       <div class="container form-group">
         <div class="d-grid gap-2">
@@ -42,7 +42,7 @@
               aria-label="Amount"
               inputmode="numeric"
             />
-            <input type="checkbox" class="btn-check" id="gst" autocomplete="off">
+            <input type="checkbox" class="form-check-input btn-check" id="gst" name='gst' aria-label="GST">
             <label class="btn btn-outline-success" 
             for="gst">Includes GST?</label>
           </div>

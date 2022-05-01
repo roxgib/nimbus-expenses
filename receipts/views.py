@@ -30,22 +30,7 @@ def add(request: HttpRequest, errors: dict | None = None) -> HttpResponse:
     return render(request, 'add.html')
 
 @login_required
-def expenses(request: HttpRequest) -> HttpResponse:
-    client = request.user
-    if not client.is_authenticated: 
-        return redirect('/')
-    expenses = list(Expense.objects.filter(client=client))
-    expenses.sort(key=lambda e: e.date, reverse=True)
-    expense_list = [
-        [e.date.strftime('%-d %b %y'), e.expense, f"${e.amount:.2f}", e.notes] for e in expenses
-        ]
-    return render(request, 'expenses.html', {'expenses': expense_list})
-
-def help(request: HttpRequest) -> HttpResponse:
-    return render(request, 'help.html')
-
-@login_required
-def submit(request: HttpRequest) -> HttpRedirect:
+def add_expense(request: HttpRequest) -> HttpRedirect:
     if request.method != 'POST': 
         return redirect('/')
     form = UploadForm(request.POST, request.FILES)
@@ -66,24 +51,43 @@ def submit(request: HttpRequest) -> HttpRedirect:
         for chunk in image.chunks():
             file.write(chunk)
 
-    # FIXME Subclass model.init to transform the arguments
+    # FIXME Find a better way to transform the arguments
 
-    post = dict(request.POST)
-    post['date'] = datetime.strftime(
+    expense = dict(request.POST)
+    expense['date'] = datetime.strftime(
         datetime.strptime(request.POST['date'],"%m/%d/%Y"),
         '%Y-%m-%d %H:%M')
 
-    print(post)
-    del post['csrfmiddlewaretoken']
-    post['amount'] = post['amount'][0]
+    print(expense)
+
+    for item in ['expense', 'amount', 'gst', 'notes']:
+        expense[item] = expense[item][0]
+
+    del expense['csrfmiddlewaretoken']
+    expense['gst'] = expense['gst'] == 'on'
 
     Expense.objects.create(date_added = date.today(), 
                            image = filepath, 
                            client = request.user, 
-                           **post
+                           **expense
                            )
     
     return redirect('/add')
+
+@login_required
+def expenses(request: HttpRequest) -> HttpResponse:
+    client = request.user
+    if not client.is_authenticated: 
+        return redirect('/')
+    expenses = list(Expense.objects.filter(client=client))
+    expenses.sort(key=lambda e: e.date, reverse=True)
+    expenses = [
+        [e.date.strftime('%-d %b %y'), e.expense, f"${e.amount:.2f}", e.notes] for e in expenses
+        ]
+    return render(request, 'expenses.html', {'expenses': expenses})
+
+def help(request: HttpRequest) -> HttpResponse:
+    return render(request, 'help.html')
 
 @login_required
 def manage(request: HttpRequest, client_id: int | None = None) -> HttpResponse:
