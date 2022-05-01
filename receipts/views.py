@@ -32,9 +32,9 @@ def add(request: HttpRequest, errors: dict | None = None) -> HttpResponse:
 @login_required
 def expenses(request: HttpRequest) -> HttpResponse:
     client = request.user
-    if not client.authenticated: 
+    if not client.is_authenticated: 
         return redirect('/')
-    expenses = Expense.objects.filter(client=client)
+    expenses = list(Expense.objects.filter(client=client))
     expenses.sort(key=lambda e: e.date, reverse=True)
     expense_list = [
         [e.date.strftime('%-d %b %y'), e.expense, f"${e.amount:.2f}", e.notes] for e in expenses
