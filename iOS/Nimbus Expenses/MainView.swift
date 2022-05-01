@@ -9,57 +9,46 @@ import SwiftUI
 import UIKit
 import WebKit
 
-var webView: WKWebView!
+struct WebView: UIViewRepresentable {
+    typealias UIViewType = WKWebView
 
-class ViewController: UIViewController, WKUIDelegate {
-    var webView: WKWebView! override func loadView() {
-        let webConfiguration = WKWebViewConfiguration()
-        webView = WKWebView(frame: .zero, configuration: webConfiguration)
-        webView.uiDelegate = self
-        view = webView
+    let webView: WKWebView
+    
+    func makeUIView(context: Context) -> WKWebView {
+        return webView
     }
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        let myURL = URL(string: "https://nimbusreceipts.azurewebsites.net/add/)
-        let myRequest = URLRequest(url: myURL!)
-        webView.load(myRequest)
+    
+    func updateUIView(_ uiView: WKWebView, context: Context) { }
+}
+
+
+class WebViewModel: ObservableObject {
+    let webView: WKWebView
+    let url: URL
+    
+    init() {
+        webView = WKWebView(frame: .zero)
+        url = URL(string: "https://benoitpasquier.com")!
+
+        loadUrl()
+    }
+    
+    func loadUrl() {
+        webView.load(URLRequest(url: url))
     }
 }
 
-struct MainView: View {
+struct ContentView: View {
+    
+    @StateObject var model = WebViewModel()
+    
     var body: some View {
-        VStack {
-            ProgressView(value: 5, total: 15)
-            HStack {
-                VStack(alignment: .leading) {
-                    Text("Seconds Elapsed")
-                        .font(.caption)
-                    Label("300", systemImage: "hourglass.bottomhalf.fill")
-                }
-                Spacer()
-                VStack(alignment: .trailing) {
-                    Text("Seconds Remaining")
-                        .font(.caption)
-                    Label("600", systemImage: "hourglass.tophalf.fill")
-                }
-                
-            }
-            Circle()
-                .strokeBorder(lineWidth: 24)
-            HStack {
-                Text("Speaker 1 of 3")
-                Button(action: {}) {
-                    Image(systemName: "forward.fill")
-                }
-            }
-            
-        }
-        .padding()
+        WebView(webView: model.webView)
     }
 }
-
+                  
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        MainView()
+        ContentView()
     }
 }
