@@ -4,11 +4,11 @@
   <body>
     {% include 'navbar.html' %}
     <br />
+    <div class="container">
     <form class="post-form" enctype="multipart/form-data" action="{% url 'add_expense' %}" method="POST">
       {% csrf_token %}
-      <div class="container form-group">
+      <div class="form-group">
         <div class="d-grid gap-2">
-          
           <div class="input-group mb-2">
             <span class="input-group-text">Expense</span>
             <input
@@ -27,7 +27,7 @@
               class="form-control" 
               id="date" 
               name="date" 
-              placeholder="MM/DD/YYY" 
+              placeholder="MM/DD/YYYY" 
               aria-label="Date"
               type="text"/>
           </div>
@@ -66,10 +66,12 @@
               />
             </div>
 
-            <input class="btn btn-primary btn-lg" type="submit" value="Submit" />
         </div>
+        <br>
+        <input class="btn btn-primary btn-lg" type="submit" value="Submit" />
       </div>
     </form>
+    </div>
 
     <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
   </body>
