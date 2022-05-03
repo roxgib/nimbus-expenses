@@ -30,7 +30,7 @@
         "venv.bak{,/**}",
         ".vscode{,/**}"
     ],
-    "appService.deploySubpath": ".",
+    "appService.deploySubpath": "./django/",
     "appService.defaultWebAppToDeploy": "/subscriptions/44ea3aba-929a-437d-8b36-6df51ee9b399/resourceGroups/nimbusrecipts/providers/Microsoft.Web/sites/nimbusreceipts",
     "python.testing.unittestArgs": [
         "-v",

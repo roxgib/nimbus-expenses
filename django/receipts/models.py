@@ -10,8 +10,8 @@ from nimbus import settings
 class Client(User):
     notes = models.TextField('Notes', max_length=300, null=True, blank=True)
     auth_token = models.CharField("Authentication Code", 'auth_token', None, 
-                                  max_length=24, null=True, blank=True)
-    auth_expiry = models.DateTimeField("Authentication Code Expiry Date",      
+                                  max_length=128, null=True, blank=True)
+    auth_expiry = models.DateTimeField("Authentication Code Expiry Date",
                                        'auth_expiry', null=True, blank=True)
 
     def __str__(self):

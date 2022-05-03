@@ -23,17 +23,16 @@ MIDDLEWARE = [
 ]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# The full username for PostgreSQL flexible server is username (not @sever-name)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ['DBNAME'],
-        'HOST': os.environ['DBHOST'],
-        'USER': os.environ['DBUSER'],
-        'PASSWORD': os.environ['DBPASS'] 
+        'NAME': os.environ['POSTGRES_DBNAME'],
+        'HOST': os.environ['POSTGRES_DBHOST'],
+        'USER': os.environ['POSTGRES_DBUSER'],
+        'PASSWORD': os.environ['POSTGRES_DBPASS'] 
     }
 }
 
-EMAIL_LINK_DOMAIN = "https://nimbusexpenses.azurewebsites.net/"
+'https://'+ os.environ['WEBSITE_HOSTNAME'] if 'WEBSITE_HOSTNAME' in os.environ else "https://nimbusrecipts.azurewebsites.net/"

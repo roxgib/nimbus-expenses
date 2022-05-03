@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 DEBUG = True
+RUN_SERVER_PORT = 9000
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -54,7 +55,7 @@ WSGI_APPLICATION = 'nimbus.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': './dev_database.sqlite',
+        'NAME': '../dev_database.sqlite',
     },
 }
 
