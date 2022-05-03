@@ -58,13 +58,10 @@ def add_expense(request: HttpRequest) -> HttpRedirect:
         datetime.strptime(request.POST['date'],"%m/%d/%Y"),
         '%Y-%m-%d %H:%M')
 
-    print(expense)
-
-    for item in ['expense', 'amount', 'gst', 'notes']:
+    for item in ['expense', 'amount', 'notes']:
         expense[item] = expense[item][0]
-
+    expense['gst'] = 'gst' in expense
     del expense['csrfmiddlewaretoken']
-    expense['gst'] = expense['gst'] == 'on'
 
     Expense.objects.create(date_added = date.today(), 
                            image = filepath, 
