@@ -35,4 +35,4 @@ DATABASES = {
     }
 }
 
-'https://'+ os.environ['WEBSITE_HOSTNAME'] if 'WEBSITE_HOSTNAME' in os.environ else "https://nimbusrecipts.azurewebsites.net/"
+EMAIL_LINK_DOMAIN = 'https://'+ os.environ['WEBSITE_HOSTNAME'] if 'WEBSITE_HOSTNAME' in os.environ else "https://nimbusrecipts.azurewebsites.net/"

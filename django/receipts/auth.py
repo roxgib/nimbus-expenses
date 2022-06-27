@@ -50,7 +50,7 @@ class EmailAuthBackend(django.contrib.auth.backends.BaseBackend):
         token = auth.set_auth_token(client)
         content = ("Please use this link to authenticate: "
                 + settings.EMAIL_LINK_DOMAIN
-                + 'login/'
+                + '/login/'
                 + token)
         mail.send_mail("Nimbus Expenses", content,
                        "expenses@nimbus.financial", 
